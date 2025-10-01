@@ -1,0 +1,310 @@
+# =====================================================================================
+# BoilerFab Configuration - Production Ready Setup
+# =====================================================================================
+
+# Service Configuration
+service:
+  name: "BoilerFab Template Service"
+  description: "Universal Project Scaffolding Platform with Traefik Integration"
+  version: "2.0.0"
+  port: 8000
+  host: "0.0.0.0"
+  debug: false
+  
+# Security & Authentication
+security:
+  # CORS configuration for Traefik integration
+  cors_origins:
+    - "http://localhost"
+    - "http://localhost:8090"
+    - "http://localhost:8000"
+    - "https://*.localhost"
+    - "https://boilerfab.localhost"
+  
+  # API Key settings
+  api_key:
+    auto_generate: true
+    length: 32
+    prefix: "ftk_"
+    
+  # Trusted hosts for Traefik
+  trusted_hosts:
+    - "localhost"
+    - "*.localhost" 
+    - "boilerfab.localhost"
+    - "traefik.localhost"
+
+# Traefik Integration
+traefik:
+  enabled: true
+  # Domain configuration for different environments
+  domains:
+    development:
+      api: "boilerfab.localhost"
+      traefik: "traefik.localhost"
+      logs: "logs.localhost"
+      status: "status.localhost"
+      metrics: "metrics.localhost"
+    
+    production:
+      # Configure these for your domain when deploying
+      api: "api.yourdomain.com"
+      traefik: "traefik.yourdomain.com" 
+      logs: "logs.yourdomain.com"
+      status: "status.yourdomain.com"
+      metrics: "metrics.yourdomain.com"
+  
+  # Load balancer configuration
+  load_balancer:
+    health_check: true
+    timeout: "30s"
+    retries: 3
+
+# Template Management
+templates:
+  directory: "./templates"
+  max_size_mb: 500
+  allowed_extensions:
+    - ".py"
+    - ".js" 
+    - ".ts"
+    - ".html"
+    - ".css"
+    - ".json"
+    - ".yaml"
+    - ".yml"
+    - ".md"
+    - ".txt"
+    - ".sh"
+    - ".dockerfile"
+    - ".env"
+  
+  # Template validation
+  validation:
+    enabled: true
+    max_parameters: 50
+    max_nested_depth: 10
+    
+  # Built-in templates
+  builtin:
+    - "fastapi-minimal"
+    - "fastapi-advanced" 
+    - "flask-api"
+    - "django-starter"
+    - "react-app"
+    - "vue-spa"
+    - "express-api"
+    - "nodejs-cli"
+    - "python-cli"
+    - "docker-microservice"
+    - "kubernetes-deployment"
+
+# Monitoring & Observability (Lightweight Stack)
+monitoring:
+  enabled: true
+  
+  # Dozzle (Container Log Aggregation)
+  dozzle:
+    enabled: true
+    port: 9999
+    filter_containers: "boilerfab"
+    no_analytics: true
+    
+  # Uptime Kuma (Service Monitoring)
+  uptime_kuma:
+    enabled: true
+    port: 3001
+    disable_frame_sameorigin: true
+    
+  # cAdvisor (Lightweight Metrics)
+  cadvisor:
+    enabled: true
+    port: 8080
+    housekeeping_interval: "30s"
+    docker_only: true
+    
+  # Health checks
+  health_checks:
+    enabled: true
+    interval: "30s"
+    timeout: "10s"
+    retries: 3
+
+# Performance & Scaling
+performance:
+  # Concurrent operations
+  max_concurrent_generations: 10
+  max_concurrent_uploads: 5
+  
+  # Caching
+  cache:
+    enabled: true
+    ttl_seconds: 3600  # 1 hour
+    max_size_mb: 100
+    
+  # Rate limiting
+  rate_limiting:
+    enabled: true
+    requests_per_minute: 60
+    burst_size: 10
+    
+  # Request timeouts
+  timeouts:
+    generation: "120s"
+    upload: "60s"
+    download: "30s"
+
+# Storage Configuration
+storage:
+  # Runtime files
+  runtime_dir: "./runtime"
+  
+  # Logs
+  logs:
+    directory: "./runtime/logs"
+    max_file_size: "10MB"
+    max_files: 5
+    level: "INFO"
+    
+  # Backups
+  backups:
+    enabled: true
+    directory: "./runtime/backups"
+    retention_days: 30
+    
+  # Temporary files
+  temp:
+    directory: "./runtime/temp"
+    cleanup_interval: "1h"
+    max_age: "24h"
+
+# Database Integration (Optional)
+database:
+  # SQLite for development (default)
+  default:
+    type: "sqlite"
+    path: "./runtime/boilerfab.db"
+    
+  # PostgreSQL for production
+  postgres:
+    enabled: false  # Set to true when using --profile database
+    host: "postgres"
+    port: 5432
+    database: "boilerfab"
+    username: "boilerfab"
+    # Password from environment: POSTGRES_PASSWORD
+    
+  # Redis for caching
+  redis:
+    enabled: false  # Set to true when using --profile caching
+    host: "redis"
+    port: 6379
+    database: 0
+    # Password from environment: REDIS_PASSWORD
+
+# Environment-Specific Settings
+environments:
+  development:
+    debug: true
+    log_level: "DEBUG"
+    auto_reload: true
+    cors_origins: ["*"]
+    
+  production:
+    debug: false
+    log_level: "WARNING"
+    auto_reload: false
+    # Restrict CORS origins in production
+    cors_origins:
+      - "https://yourdomain.com"
+      - "https://api.yourdomain.com"
+
+# Feature Flags
+features:
+  # Template marketplace
+  marketplace:
+    enabled: true
+    allow_community_templates: true
+    
+  # Advanced authentication
+  authentication:
+    enabled: false
+    provider: "oauth2"  # Future: oauth2, ldap, etc.
+    
+  # Template versioning
+  versioning:
+    enabled: true
+    max_versions: 10
+    
+  # Webhook notifications
+  webhooks:
+    enabled: false
+    endpoints: []
+    
+  # API rate limiting
+  rate_limiting:
+    enabled: true
+    
+  # Template validation
+  strict_validation:
+    enabled: true
+
+# Nginx Proxy Manager Integration
+nginx_proxy_manager:
+  # Configuration hints for NPM users
+  recommended_config:
+    ssl: true
+    force_ssl: true
+    hsts: true
+    websockets: true
+    # Custom locations for subpaths
+    locations:
+      - path: "/api"
+        proxy_pass: "http://boilerfab-service:8000"
+      - path: "/docs"  
+        proxy_pass: "http://boilerfab-service:8000"
+      - path: "/health"
+        proxy_pass: "http://boilerfab-service:8000"
+      - path: "/logs"
+        proxy_pass: "http://boilerfab-dozzle:8080"
+      - path: "/status"
+        proxy_pass: "http://boilerfab-uptime:3001"
+      - path: "/metrics"
+        proxy_pass: "http://boilerfab-cadvisor:8080"
+
+# Client Configuration
+client:
+  # Global client settings
+  default_server: "http://localhost:8090"
+  timeout: 30
+  retries: 3
+  
+  # Client paths for auto-discovery
+  config_paths:
+    - "./api_config.json"
+    - "./runtime/api_config.json"
+    - "~/.config/boilerfab/config.json"
+    - "~/.boilerfab/config.json"
+    
+  # Client installation
+  installation:
+    system_path: "/usr/local/bin"
+    user_path: "~/.local/bin"
+    
+# API Configuration
+api:
+  # API versioning
+  version: "v1"
+  prefix: "/api/v1"
+  
+  # Documentation
+  docs:
+    title: "BoilerFab API"
+    description: "Universal Project Scaffolding Platform"
+    version: "2.0.0"
+    
+  # OpenAPI settings
+  openapi:
+    enabled: true
+    swagger_ui: true
+    redoc: true
