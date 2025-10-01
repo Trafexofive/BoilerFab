@@ -11,7 +11,7 @@ services:
       - "--entrypoints.traefik.address=:8080"
       - "--ping=true"
     ports:
-      - "80:80"       # Main HTTP entry point
+      - "8090:80"     # Use different port when NPM is on :80
       - "8080:8080"   # Traefik dashboard
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
