@@ -1,0 +1,8 @@
+{
+  "name": "flask-api",
+  "description": "Modern Flask REST API with blueprints, error handling, and testing setup",
+  "version": "1.0.0",
+  "author": "BoilerFab",
+  "license": "MIT",
+  "tags": ["python", "flask", "api", "rest", "blueprints", "testing"]
+}

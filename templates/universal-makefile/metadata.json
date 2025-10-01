@@ -1,0 +1,8 @@
+{
+  "name": "universal-makefile",
+  "description": "Your universal Docker Compose Makefile with comprehensive service management and development tools",
+  "version": "1.0.0",
+  "author": "BoilerFab",
+  "license": "MIT",
+  "tags": ["makefile", "docker-compose", "devops", "universal", "management"]
+}

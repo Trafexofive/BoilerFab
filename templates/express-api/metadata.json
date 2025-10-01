@@ -1,0 +1,23 @@
+{
+  "name": "express-api",
+  "description": "Modern Node.js Express API with TypeScript, middleware, and testing setup",
+  "version": "1.0.0",
+  "author": "BoilerFab",
+  "license": "MIT",
+  "tags": ["nodejs", "express", "typescript", "api", "rest", "middleware"],
+  "parameters": [
+    {
+      "name": "project_name",
+      "type": "string",
+      "description": "Name of the Express API project",
+      "required": true
+    },
+    {
+      "name": "port",
+      "type": "number",
+      "description": "Port number for the server",
+      "default": 3000,
+      "required": false
+    }
+  ]
+}

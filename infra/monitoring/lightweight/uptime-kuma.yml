@@ -1,0 +1,46 @@
+# Uptime Kuma Configuration  
+# Self-hosted monitoring tool like "Uptime Robot"
+
+# Access: http://localhost:3001
+# Default: admin/admin (set during first setup)
+
+# Features:
+#   - HTTP/HTTPS monitoring
+#   - TCP port monitoring  
+#   - Ping monitoring
+#   - Keyword monitoring
+#   - Status pages
+#   - Multiple notification methods
+#   - Lightweight (~50MB)
+
+# Monitors to add for BoilerFab:
+monitors:
+  - name: "BoilerFab API"
+    type: "http"
+    url: "http://boilerfab-service:8000/health"
+    interval: 60
+    
+  - name: "BoilerFab Root"
+    type: "http" 
+    url: "http://boilerfab-service:8000/"
+    interval: 300
+    
+  - name: "Redis Cache"
+    type: "tcp"
+    hostname: "redis"
+    port: 6379
+    interval: 120
+    
+  - name: "PostgreSQL DB"
+    type: "tcp"  
+    hostname: "postgres"
+    port: 5432
+    interval: 120
+
+# Notification channels (configure in UI):
+# - Email
+# - Slack
+# - Discord  
+# - Webhook
+# - Telegram
+# - Many more...

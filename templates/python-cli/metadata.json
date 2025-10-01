@@ -1,0 +1,36 @@
+{
+  "name": "python-cli",
+  "description": "Professional Python CLI application with Click, rich output, and comprehensive testing",
+  "version": "1.0.0",
+  "author": "BoilerFab",
+  "license": "MIT",
+  "tags": ["python", "cli", "click", "terminal", "command-line"],
+  "parameters": [
+    {
+      "name": "project_name",
+      "type": "string",
+      "description": "Name of the CLI project",
+      "required": true
+    },
+    {
+      "name": "cli_name",
+      "type": "string", 
+      "description": "Command name for the CLI (defaults to project_name)",
+      "required": false
+    },
+    {
+      "name": "author_name",
+      "type": "string",
+      "description": "Author name",
+      "default": "Developer",
+      "required": false
+    },
+    {
+      "name": "author_email",
+      "type": "string",
+      "description": "Author email",
+      "default": "developer@example.com",
+      "required": false
+    }
+  ]
+}

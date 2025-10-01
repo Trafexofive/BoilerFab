@@ -1,0 +1,21 @@
+# Dozzle Configuration
+# Lightweight real-time log viewer for Docker containers
+
+# Environment variables for Dozzle
+# DOZZLE_LEVEL: info, debug, warning, error
+# DOZZLE_TAILSIZE: number of lines to show initially
+# DOZZLE_FILTER: filter by container name
+# DOZZLE_AUTH_PROVIDER: none, simple
+# DOZZLE_USERS: user:password for simple auth
+
+# Access: http://localhost:9999
+# Features:
+#   - Real-time log streaming
+#   - Search and filter logs  
+#   - Multiple container support
+#   - No configuration required
+#   - Lightweight (~10MB image)
+
+# Example usage with authentication:
+# DOZZLE_AUTH_PROVIDER=simple
+# DOZZLE_USERS=admin:secretpassword

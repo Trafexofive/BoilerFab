@@ -1,0 +1,37 @@
+{
+  "name": "fastapi-fullstack",
+  "description": "Production-ready FastAPI application with database, authentication, testing, and Docker support",
+  "version": "1.0.0",
+  "author": "BoilerFab",
+  "license": "MIT",
+  "tags": ["fastapi", "python", "api", "database", "auth", "docker", "production"],
+  "parameters": [
+    {
+      "name": "project_name",
+      "type": "string",
+      "description": "Name of the project",
+      "required": true
+    },
+    {
+      "name": "database_type",
+      "type": "string",
+      "description": "Database type to use",
+      "default": "postgresql",
+      "required": false
+    },
+    {
+      "name": "auth_method",
+      "type": "string",
+      "description": "Authentication method",
+      "default": "jwt",
+      "required": false
+    },
+    {
+      "name": "enable_cors",
+      "type": "boolean",
+      "description": "Enable CORS middleware",
+      "default": true,
+      "required": false
+    }
+  ]
+}

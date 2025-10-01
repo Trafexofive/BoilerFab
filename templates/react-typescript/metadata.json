@@ -1,0 +1,37 @@
+{
+  "name": "react-typescript",
+  "description": "Modern React application with TypeScript, Tailwind CSS, and development tools",
+  "version": "1.0.0",
+  "author": "BoilerFab",
+  "license": "MIT",
+  "tags": ["react", "typescript", "frontend", "tailwind", "vite", "modern"],
+  "parameters": [
+    {
+      "name": "project_name",
+      "type": "string",
+      "description": "Name of the React project",
+      "required": true
+    },
+    {
+      "name": "use_router",
+      "type": "boolean",
+      "description": "Include React Router for navigation",
+      "default": true,
+      "required": false
+    },
+    {
+      "name": "ui_library",
+      "type": "string",
+      "description": "UI component library to include",
+      "default": "tailwind",
+      "required": false
+    },
+    {
+      "name": "state_management",
+      "type": "string",
+      "description": "State management solution",
+      "default": "zustand",
+      "required": false
+    }
+  ]
+}

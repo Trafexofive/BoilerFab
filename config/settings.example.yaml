@@ -1,0 +1,38 @@
+# Example BoilerFab Settings Configuration
+# Copy this to settings.yaml and customize for your environment
+
+service:
+  name: "My BoilerFab Instance" 
+  description: "Custom template service for my organization"
+  port: 8000
+  host: "0.0.0.0"
+
+# Custom CORS for your frontend
+security:
+  cors_origins:
+    - "https://mycompany.com"
+    - "https://dev.mycompany.com"
+  trusted_hosts:
+    - "mycompany.com"
+    - "*.mycompany.com"
+
+# Template configuration
+templates:
+  directory: "./my-templates"  # Custom template directory
+  max_size_mb: 250            # Larger templates allowed
+  
+# Enable advanced features
+features:
+  template_validation: true
+  user_authentication: true   # Enable if you add auth
+  template_marketplace: true  # Enable community templates
+  
+# Performance tuning
+performance:
+  max_concurrent_generations: 20
+  cache_ttl_seconds: 7200     # 2 hour cache
+
+# Enable monitoring in production
+monitoring:
+  enabled: true
+  prometheus_port: 9090

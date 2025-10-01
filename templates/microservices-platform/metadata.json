@@ -1,0 +1,23 @@
+{
+  "name": "microservices-platform",
+  "description": "Full microservices platform with your universal Makefile, multi-service architecture, and comprehensive tooling",
+  "version": "1.0.0",
+  "author": "BoilerFab",
+  "license": "MIT",
+  "tags": ["microservices", "docker-compose", "platform", "architecture", "multi-service"],
+  "parameters": [
+    {
+      "name": "project_name",
+      "type": "string",
+      "description": "Name of the microservices platform",
+      "required": true
+    },
+    {
+      "name": "main_service_port",
+      "type": "number",
+      "description": "Main API gateway port",
+      "default": 8000,
+      "required": false
+    }
+  ]
+}

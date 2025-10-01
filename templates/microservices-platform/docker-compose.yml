@@ -1,0 +1,162 @@
+version: '3.8'
+
+services:
+  api-gateway:
+    build:
+      context: ./services/api-gateway
+      dockerfile: Dockerfile
+    ports:
+      - "{{main_service_port}}:8000"
+    environment:
+      - SERVICE_NAME={{PROJECT_NAME}}-api-gateway
+      - AUTH_SERVICE_URL=http://auth-service:8001
+      - WEB_CLIENT_URL=http://web-client:3000
+    depends_on:
+      - auth-service
+      - redis
+    networks:
+      - {{PROJECT_NAME}}-network
+    volumes:
+      - ./services/api-gateway:/app
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    labels:
+      - "com.docker.compose.project={{PROJECT_NAME}}"
+
+  auth-service:
+    build:
+      context: ./services/auth-service
+      dockerfile: Dockerfile
+    ports:
+      - "8001:8001"
+    environment:
+      - SERVICE_NAME={{PROJECT_NAME}}-auth-service
+      - DATABASE_URL=postgresql://postgres:password@postgres:5432/{{PROJECT_NAME}}_auth
+      - JWT_SECRET=your-jwt-secret-change-in-production
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - {{PROJECT_NAME}}-network
+    volumes:
+      - ./services/auth-service:/app
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    labels:
+      - "com.docker.compose.project={{PROJECT_NAME}}"
+
+  web-client:
+    build:
+      context: ./services/web-client
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_API_URL=http://localhost:{{main_service_port}}
+      - REACT_APP_SERVICE_NAME={{PROJECT_NAME}}
+    depends_on:
+      - api-gateway
+    networks:
+      - {{PROJECT_NAME}}-network
+    volumes:
+      - ./services/web-client:/app
+      - /app/node_modules
+    labels:
+      - "com.docker.compose.project={{PROJECT_NAME}}"
+
+  # Infrastructure Services
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_DB={{PROJECT_NAME}}_auth
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./infra/config/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    networks:
+      - {{PROJECT_NAME}}-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    labels:
+      - "com.docker.compose.project={{PROJECT_NAME}}"
+
+  redis:
+    image: redis:7-alpine
+    command: redis-server --requirepass redis-password
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - {{PROJECT_NAME}}-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    labels:
+      - "com.docker.compose.project={{PROJECT_NAME}}"
+
+  # Monitoring & Observability
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./infra/config/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+    networks:
+      - {{PROJECT_NAME}}-network
+    labels:
+      - "com.docker.compose.project={{PROJECT_NAME}}"
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./infra/config/grafana/provisioning:/etc/grafana/provisioning
+    networks:
+      - {{PROJECT_NAME}}-network
+    labels:
+      - "com.docker.compose.project={{PROJECT_NAME}}"
+
+volumes:
+  postgres_data:
+    labels:
+      - "com.docker.compose.project={{PROJECT_NAME}}"
+  redis_data:
+    labels:
+      - "com.docker.compose.project={{PROJECT_NAME}}"
+  prometheus_data:
+    labels:
+      - "com.docker.compose.project={{PROJECT_NAME}}"
+  grafana_data:
+    labels:
+      - "com.docker.compose.project={{PROJECT_NAME}}"
+
+networks:
+  {{PROJECT_NAME}}-network:
+    driver: bridge
+    labels:
+      - "com.docker.compose.project={{PROJECT_NAME}}"

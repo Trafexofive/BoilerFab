@@ -1,0 +1,13 @@
+{
+  "name": "web-api-template",
+  "description": "Template for web APIs with custom parameters",
+  "version": "1.0.0",
+  "author": "Test User",
+  "license": null,
+  "tags": [
+    "web",
+    "api"
+  ],
+  "parameters": [],
+  "created_at": "2025-09-25T07:55:47.913536"
+}

@@ -1,0 +1,436 @@
+#!/usr/bin/env python3
+"""
+BoilerFab - Universal Project Template Client
+A standalone CLI tool to interact with BoilerFab template services from anywhere
+"""
+
+import argparse
+import requests
+import zipfile
+import io
+import json
+import os
+import sys
+from pathlib import Path
+import tempfile
+import shutil
+
+# ANSI color codes for better output
+class Colors:
+    GREEN = '\033[92m'
+    YELLOW = '\033[93m'
+    RED = '\033[91m'
+    BLUE = '\033[94m'
+    CYAN = '\033[96m'
+    MAGENTA = '\033[95m'
+    WHITE = '\033[97m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+    END = '\033[0m'
+
+def print_colored(text, color=Colors.WHITE):
+    """Print colored text"""
+    print(f"{color}{text}{Colors.END}")
+
+def print_success(text):
+    print_colored(f"✅ {text}", Colors.GREEN)
+
+def print_error(text):
+    print_colored(f"❌ Error: {text}", Colors.RED)
+
+def print_warning(text):
+    print_colored(f"⚠️  {text}", Colors.YELLOW)
+
+def print_info(text):
+    print_colored(f"ℹ️  {text}", Colors.BLUE)
+
+def print_banner():
+    """Print the BoilerFab banner"""
+    banner = """
+🚀 BoilerFab Client
+Universal Project Template Generator
+"""
+    print_colored(banner, Colors.CYAN + Colors.BOLD)
+
+def find_api_key():
+    """
+    Find API key from multiple possible locations:
+    1. Environment variable BOILERFAB_API_KEY
+    2. Current directory api_config.json
+    3. User's home directory ~/.boilerfab/config.json
+    4. System-wide /etc/boilerfab/config.json
+    """
+    # Try environment variable first
+    api_key = os.environ.get('BOILERFAB_API_KEY')
+    if api_key:
+        return api_key
+    
+    # Try various config file locations
+    config_paths = [
+        Path.cwd() / "api_config.json",
+        Path.home() / ".boilerfab" / "config.json",
+        Path.home() / ".config" / "boilerfab" / "config.json",
+        Path("/etc/boilerfab/config.json")
+    ]
+    
+    for config_path in config_paths:
+        if config_path.exists():
+            try:
+                with open(config_path, 'r') as f:
+                    config = json.load(f)
+                    api_key = config.get('api_key')
+                    if api_key:
+                        return api_key
+            except (json.JSONDecodeError, IOError):
+                continue
+    
+    return None
+
+def test_connection(server_url, api_key=None):
+    """Test if the server is accessible"""
+    try:
+        headers = {"X-API-Key": api_key} if api_key else {}
+        response = requests.get(f"{server_url}/health", headers=headers, timeout=10)
+        return response.status_code == 200
+    except requests.exceptions.RequestException:
+        return False
+
+def get_templates(server_url, api_key):
+    """Get list of available templates from the server"""
+    try:
+        headers = {"X-API-Key": api_key} if api_key else {}
+        response = requests.get(f"{server_url}/api/v1/templates", headers=headers)
+        response.raise_for_status()
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        print_error(f"Failed to fetch templates: {e}")
+        if hasattr(e, 'response') and e.response is not None:
+            if e.response.status_code == 401:
+                print_error("Authentication failed. Check your API key.")
+            elif e.response.status_code == 404:
+                print_error("Templates endpoint not found. Check server URL.")
+        return None
+
+def get_template_detail(server_url, template_name, api_key):
+    """Get detailed information about a specific template"""
+    try:
+        headers = {"X-API-Key": api_key} if api_key else {}
+        response = requests.get(f"{server_url}/api/v1/templates/{template_name}", headers=headers)
+        response.raise_for_status()
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        print_error(f"Failed to get template details: {e}")
+        if hasattr(e, 'response') and e.response is not None:
+            if e.response.status_code == 404:
+                print_error(f"Template '{template_name}' not found.")
+        return None
+
+def create_template(server_url, template_data, api_key):
+    """Register a new template"""
+    try:
+        headers = {"X-API-Key": api_key} if api_key else {}
+        response = requests.post(f"{server_url}/api/v1/templates", json=template_data, headers=headers)
+        response.raise_for_status()
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        print_error(f"Failed to create template: {e}")
+        return None
+
+def generate_project(server_url, template_name, project_name, output_dir, api_key, parameters=None):
+    """Request project generation from the server and download the result"""
+    if parameters is None:
+        parameters = {}
+    
+    try:
+        payload = {
+            "template_name": template_name,
+            "project_name": project_name,
+            "parameters": parameters
+        }
+        
+        headers = {"X-API-Key": api_key} if api_key else {}
+        
+        print_info(f"Generating project '{project_name}' from template '{template_name}'...")
+        
+        response = requests.post(f"{server_url}/api/v1/generate", json=payload, headers=headers)
+        response.raise_for_status()
+        
+        # Handle the zip response
+        output_path = Path(output_dir) / project_name
+        
+        # Create output directory if it doesn't exist
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        
+        # Extract zip content
+        with zipfile.ZipFile(io.BytesIO(response.content), 'r') as zip_file:
+            zip_file.extractall(output_path)
+        
+        print_success(f"Project '{project_name}' generated successfully!")
+        print_info(f"Location: {output_path.absolute()}")
+        
+        # Show project structure if possible
+        try:
+            files = list(output_path.rglob('*'))[:10]  # Show first 10 files
+            if files:
+                print_info("Generated files:")
+                for file in files:
+                    if file.is_file():
+                        relative_path = file.relative_to(output_path)
+                        print(f"  📄 {relative_path}")
+        except Exception:
+            pass
+            
+        return True
+        
+    except requests.exceptions.RequestException as e:
+        print_error(f"Failed to generate project: {e}")
+        return False
+    except zipfile.BadZipFile:
+        print_error("Server returned invalid zip file")
+        return False
+    except Exception as e:
+        print_error(f"Unexpected error: {e}")
+        return False
+
+def setup_api_key():
+    """Interactive setup for API key"""
+    print_info("API key not found. Let's set it up!")
+    print("\nYou can:")
+    print("1. Set environment variable: export BOILERFAB_API_KEY='your_key'")
+    print("2. Create config file in current directory: api_config.json")
+    print("3. Create user config: ~/.config/boilerfab/config.json")
+    
+    api_key = input("\nEnter your BoilerFab API key: ").strip()
+    if not api_key:
+        print_error("No API key provided")
+        return None
+    
+    # Ask where to save it
+    print("\nWhere would you like to save it?")
+    print("1. Current directory (api_config.json)")
+    print("2. User config directory (~/.config/boilerfab/config.json)")
+    print("3. Don't save (use for this session only)")
+    
+    choice = input("Enter choice (1-3): ").strip()
+    
+    config_data = {
+        "api_key": api_key,
+        "service_name": "BoilerFab Template Service"
+    }
+    
+    if choice == "1":
+        config_path = Path.cwd() / "api_config.json"
+    elif choice == "2":
+        config_path = Path.home() / ".config" / "boilerfab" / "config.json"
+        config_path.parent.mkdir(parents=True, exist_ok=True)
+    else:
+        return api_key
+    
+    try:
+        with open(config_path, 'w') as f:
+            json.dump(config_data, f, indent=2)
+        print_success(f"Configuration saved to {config_path}")
+        return api_key
+    except Exception as e:
+        print_error(f"Failed to save configuration: {e}")
+        return api_key
+
+def main():
+    parser = argparse.ArgumentParser(
+        description="BoilerFab - Universal Project Template Client",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  %(prog)s list --server https://templates.mycompany.com
+  %(prog)s generate my-api --template fastapi-minimal
+  %(prog)s detail react-app --server http://localhost:8000
+  %(prog)s create my-template -d "Custom template" -a "John Doe"
+
+Environment Variables:
+  BOILERFAB_API_KEY    API key for authentication
+  BOILERFAB_SERVER     Default server URL
+        """
+    )
+    
+    parser.add_argument("--server", "-s", 
+                       default=os.environ.get('BOILERFAB_SERVER', 'http://localhost:8000'),
+                       help="BoilerFab server URL (default: http://localhost:8000)")
+    parser.add_argument("--api-key", "-k",
+                       help="API key for authentication (overrides config file)")
+    parser.add_argument("--no-color", action="store_true",
+                       help="Disable colored output")
+    parser.add_argument("--version", action="version", version="BoilerFab Client 1.0.0")
+    
+    subparsers = parser.add_subparsers(dest="command", help="Available commands")
+    
+    # List command
+    list_parser = subparsers.add_parser("list", help="List available templates")
+    
+    # Detail command
+    detail_parser = subparsers.add_parser("detail", help="Get template details")
+    detail_parser.add_argument("template_name", help="Name of the template")
+    
+    # Generate command
+    generate_parser = subparsers.add_parser("generate", help="Generate a project")
+    generate_parser.add_argument("project_name", help="Name of the project to generate")
+    generate_parser.add_argument("--template", "-t", default="fastapi-minimal",
+                                help="Template to use (default: fastapi-minimal)")
+    generate_parser.add_argument("--output", "-o", default=".",
+                                help="Output directory (default: current directory)")
+    generate_parser.add_argument("--param", "-p", action="append", nargs=2,
+                                metavar=("KEY", "VALUE"),
+                                help="Template parameters (can be used multiple times)")
+    
+    # Create command
+    create_parser = subparsers.add_parser("create", help="Register a new template")
+    create_parser.add_argument("name", help="Template name")
+    create_parser.add_argument("--description", "-d", required=True,
+                              help="Template description")
+    create_parser.add_argument("--version", "-v", default="1.0.0",
+                              help="Template version")
+    create_parser.add_argument("--author", "-a", help="Template author")
+    create_parser.add_argument("--license", "-l", help="Template license")
+    create_parser.add_argument("--tags", "-t", nargs="*", default=[],
+                              help="Template tags")
+    
+    # Health command
+    health_parser = subparsers.add_parser("health", help="Check server health")
+    
+    # Setup command
+    setup_parser = subparsers.add_parser("setup", help="Setup API key configuration")
+    
+    args = parser.parse_args()
+    
+    # Disable colors if requested
+    if args.no_color:
+        for attr in dir(Colors):
+            if not attr.startswith('_'):
+                setattr(Colors, attr, '')
+    
+    # Show banner for interactive commands
+    if args.command in ['setup', None]:
+        print_banner()
+    
+    # Handle setup command
+    if args.command == "setup":
+        setup_api_key()
+        return
+    
+    # Show help if no command
+    if args.command is None:
+        print_banner()
+        parser.print_help()
+        return
+    
+    # Get API key
+    api_key = args.api_key or find_api_key()
+    
+    # Health check doesn't require API key necessarily
+    if args.command == "health":
+        print_info(f"Checking server health at {args.server}...")
+        if test_connection(args.server, api_key):
+            print_success("Server is healthy and accessible")
+        else:
+            print_error("Server is not accessible or not running")
+            print_info("Make sure the BoilerFab service is running and accessible")
+            sys.exit(1)
+        return
+    
+    # For other commands, API key is required
+    if not api_key:
+        print_error("No API key found!")
+        print_info("Run 'boilerfab-client setup' to configure your API key")
+        print_info("Or set the BOILERFAB_API_KEY environment variable")
+        sys.exit(1)
+    
+    # Test connection first
+    if not test_connection(args.server, api_key):
+        print_error(f"Cannot connect to server at {args.server}")
+        print_info("Check if the service is running and the URL is correct")
+        sys.exit(1)
+    
+    # Handle commands
+    if args.command == "list":
+        templates = get_templates(args.server, api_key)
+        if templates is not None:
+            if not templates:
+                print_info("No templates available")
+                return
+            
+            print_info("Available templates:")
+            for template in templates:
+                name = template.get('name', 'Unknown')
+                desc = template.get('description', 'No description')
+                version = template.get('version', '1.0.0')
+                tags = template.get('tags', [])
+                
+                print(f"\n📦 {Colors.BOLD}{name}{Colors.END} (v{version})")
+                print(f"   {desc}")
+                if tags:
+                    print(f"   Tags: {', '.join(tags)}")
+    
+    elif args.command == "detail":
+        template = get_template_detail(args.server, args.template_name, api_key)
+        if template is not None:
+            print(f"\n📦 {Colors.BOLD}{template['name']}{Colors.END}")
+            print(f"Description: {template['description']}")
+            print(f"Version: {template['version']}")
+            print(f"Author: {template.get('author', 'Unknown')}")
+            
+            tags = template.get('tags', [])
+            if tags:
+                print(f"Tags: {', '.join(tags)}")
+            
+            params = template.get('parameters', [])
+            if params:
+                print(f"\nParameters:")
+                for param in params:
+                    required = " (required)" if param.get('required', True) else " (optional)"
+                    param_type = param.get('type', 'string')
+                    print(f"  • {param['name']} ({param_type}){required}")
+                    print(f"    {param.get('description', 'No description')}")
+                    if 'default' in param and param['default'] is not None:
+                        print(f"    Default: {param['default']}")
+    
+    elif args.command == "generate":
+        # Parse parameters
+        parameters = {}
+        if args.param:
+            parameters = dict(args.param)
+        
+        success = generate_project(
+            server_url=args.server,
+            template_name=args.template,
+            project_name=args.project_name,
+            output_dir=args.output,
+            api_key=api_key,
+            parameters=parameters
+        )
+        if not success:
+            sys.exit(1)
+    
+    elif args.command == "create":
+        template_data = {
+            "name": args.name,
+            "description": args.description,
+            "version": args.version,
+            "author": args.author,
+            "license": args.license,
+            "tags": args.tags,
+            "parameters": []
+        }
+        result = create_template(args.server, template_data, api_key)
+        if result:
+            print_success(f"Template '{args.name}' created successfully!")
+        else:
+            sys.exit(1)
+
+if __name__ == "__main__":
+    try:
+        main()
+    except KeyboardInterrupt:
+        print_error("Operation cancelled by user")
+        sys.exit(1)
+    except Exception as e:
+        print_error(f"Unexpected error: {e}")
+        sys.exit(1)

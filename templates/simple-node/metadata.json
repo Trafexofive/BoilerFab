@@ -1,0 +1,8 @@
+{
+  "name": "simple-node",
+  "description": "Simple Node.js application with package.json and basic structure",
+  "version": "1.0.0",
+  "author": "BoilerFab",
+  "license": "MIT",
+  "tags": ["nodejs", "javascript", "simple"]
+}
