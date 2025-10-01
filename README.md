@@ -1,4 +1,4 @@
-# 🏭 BoilerFab - Universal Project Scaffolding Platform
+# BoilerFab - Enterprise Project Scaffolding Platform
 
 <div align="center">
 
@@ -8,262 +8,265 @@
 [![FastAPI](https://img.shields.io/badge/FastAPI-Framework-red.svg)](https://fastapi.tiangolo.com/)
 [![Python 3.8+](https://img.shields.io/badge/Python-3.8%2B-blue.svg)](https://python.org)
 
-**🎯 project scaffolding platform**
+**Enterprise-grade project scaffolding and template management platform**
 
-*Generate production-ready projects in seconds. Deploy anywhere. Scale infinitely.*
+*Standardize project creation across your organization with secure, scalable template management.*
 
 </div>
 
 ---
 
-## ⚡ **One-Command Deploy**
+## Quick Start
 
-**The factory starts with a single command:**
+Deploy the complete BoilerFab platform with a single command:
 
 ```bash
 git clone https://github.com/Trafexofive/BoilerFab.git
 cd BoilerFab
-make up    # 🚀 Everything starts automatically!
+make up
 ```
 
-**That's it! You now have:**
-- 🔥 **BoilerFab API** running at `http://localhost:8000`
-- 📚 **Interactive docs** at `http://localhost:8000/docs`  
-- 🎯 **CLI client** ready to use globally
-- 🛠️ **Traefik dashboard** at `http://localhost:8080`
-- 📊 **Monitoring stack** (Dozzle + Uptime Kuma)
+**Services available after startup:**
+- **BoilerFab API**: `http://localhost:8090` - Main template service
+- **Interactive Documentation**: `http://localhost:8090/docs` - OpenAPI interface
+- **Traefik Dashboard**: `http://localhost:8080` - Load balancer management  
+- **CLI Client**: Global command-line interface
+- **Monitoring**: Optional lightweight monitoring stack
 
-## ✨ Why BoilerFab?
+## Overview
 
-- **🎯 Consistency**: Standardize project setups across your entire team
-- **⚡ Speed**: Generate production-ready projects in seconds
-- **🔒 Security**: API-key authentication and secure template management
-- **🐳 Cloud-Ready**: Containerized architecture for easy deployment
-- **🔧 Extensible**: Support for any framework or technology stack
-- **📊 Template Management**: Version control and metadata tracking for templates
+BoilerFab is an enterprise-grade project scaffolding platform designed to standardize and accelerate project creation across development teams. Built with containerized microservices architecture, it provides secure template management, dynamic project generation, and comprehensive deployment automation.
 
-## 🌟 Key Features
+**Key Benefits:**
+- **Consistency**: Enforce organizational standards across all projects
+- **Speed**: Generate production-ready projects in seconds
+- **Security**: API-key authentication with secure template management
+- **Scalability**: Container-native architecture for enterprise deployment
+- **Extensibility**: Support for any technology stack or framework
+- **Integration**: Works seamlessly with existing CI/CD pipelines
+
+## Core Features
 
 | Feature | Description |
 |---------|-------------|
-| **🏗️ Multi-Framework Support** | Generate projects for FastAPI, Flask, Django, React, Vue, Express.js, and more |
-| **🏛️ Server-Client Architecture** | Centralized server with distributed client access via CLI or API |
-| **🐳 Container-Native** | Full Docker support with Docker Compose orchestration |
-| **🔐 Secure Authentication** | API key-based authentication with automatic key generation |
-| **📝 Template Management** | Create, version, and manage templates with rich metadata |
-| **⚙️ Parameter Substitution** | Dynamic customization with type-safe parameter validation |
-| **📊 RESTful API** | Complete REST API with interactive documentation |
-| **🔍 Template Discovery** | Search and explore available templates with detailed information |
+| **Multi-Framework Support** | Generate projects for FastAPI, Flask, Django, React, Vue, Express.js, and more |
+| **Server-Client Architecture** | Centralized template management with distributed CLI access |
+| **Container-Native Design** | Full Docker support with Traefik load balancing |
+| **Enterprise Security** | API key authentication with configurable access controls |
+| **Template Management** | Version-controlled templates with rich metadata and validation |
+| **Parameter Substitution** | Dynamic project customization with type-safe parameter validation |
+| **RESTful API** | Complete REST API with interactive OpenAPI documentation |
+| **Template Discovery** | Search and explore available templates with detailed information |
+| **Monitoring Integration** | Built-in monitoring stack with container logs and health checks |
 
-## 🏗️ Architecture
+## Architecture
 
-BoilerFab follows a clean, modular architecture designed for extensibility and maintainability:
+BoilerFab implements a clean, microservices-based architecture optimized for enterprise deployment:
 
 ```
 BoilerFab/
-├── 🔧 Core Service
-│   ├── services/template_service/    # Main service implementation
+├── Services
+│   ├── services/template_service/    # Core template management service
 │   │   ├── main.py                   # FastAPI application
 │   │   ├── api/                      # REST API endpoints  
-│   │   ├── models/                   # Data models
-│   │   ├── auth/                     # Authentication
+│   │   ├── models/                   # Data models and schemas
+│   │   ├── auth/                     # Authentication middleware
 │   │   └── client.py                 # Python CLI client
-│   └── templates/                    # Template definitions
-├── 🐳 Deployment
-│   ├── Dockerfile                    # Container definition
-│   ├── docker-compose.yml           # Orchestration
-│   └── Makefile                      # Build automation
-├── 📋 Configuration
-│   ├── api_config.json              # API keys (auto-generated)
-│   ├── requirements.txt             # Python dependencies
-│   └── .env.example                 # Environment template
-└── 🧪 Testing & Documentation
-    ├── scripts/                     # Test and utility scripts
-    ├── docs/                        # Documentation
-    └── testing/                     # Test files
+│   └── templates/                    # Template definitions and storage
+├── Deployment
+│   ├── deployment/                   # Docker Compose orchestration
+│   │   ├── docker-compose.yml        # Main service stack
+│   │   ├── docker-compose.prod.yml   # Production configuration
+│   │   ├── docker-compose.dev.yml    # Development environment
+│   │   └── docker-compose.monitoring.yml # Monitoring stack
+│   └── infra/                        # Infrastructure components
+├── Client Tools
+│   ├── client/                       # Standalone CLI client
+│   │   ├── boilerfab-client         # Executable client
+│   │   └── install.sh               # Installation script
+│   └── scripts/                      # Automation and testing scripts
+└── Configuration
+    ├── settings.yaml                 # Main configuration file
+    ├── config/                       # Environment-specific configs
+    └── runtime/                      # Runtime data and logs
 ```
 
-### Component Overview
+### Component Architecture
 
-| Component | Purpose | Technology |
-|-----------|---------|------------|
-| **Template Service** | Core API and business logic | FastAPI, Python 3.8+ |
-| **CLI Client** | Command-line interface | Python, Requests |
-| **Authentication** | API key management | Custom middleware |
-| **Template Engine** | Project generation | Jinja2, ZIP handling |
-| **Container Runtime** | Deployment platform | Docker, Docker Compose |
+| Component | Technology | Purpose |
+|-----------|------------|---------|
+| **Template Service** | FastAPI, Python 3.8+ | Core API and business logic |
+| **CLI Client** | Python, Requests | Command-line interface |
+| **Load Balancer** | Traefik | Service routing and SSL termination |
+| **Authentication** | Custom middleware | API key management and validation |
+| **Template Engine** | Jinja2, ZIP handling | Dynamic project generation |
+| **Monitoring** | Dozzle, Uptime Kuma | Container logs and health monitoring |
+| **Container Runtime** | Docker, Docker Compose | Deployment and orchestration |
 
-## 🚀 Quick Start
+## Installation & Setup
 
-Get up and running in 3 simple steps:
+### Prerequisites
 
-### 1. Prerequisites
+Ensure the following are installed on your system:
+
 ```bash
-# Ensure you have these installed:
-- Python 3.8+
-- Docker & Docker Compose
+- Docker 20.10+
+- Docker Compose 2.0+
+- Python 3.8+ (for CLI client)
 - Git
 ```
 
-### 2. Start the Service
+### Deployment Options
+
+#### Option 1: Production Deployment (Recommended)
+
 ```bash
-# Clone and start
-git clone <repository-url>
+# Clone and deploy
+git clone https://github.com/Trafexofive/BoilerFab.git
 cd BoilerFab
 
-# Option A: Docker Compose (Recommended)
-make compose-up
-
-# Option B: Development Mode
-make dev-run
+# Start production stack with Traefik
+make prod
 ```
 
-### 3. Generate Your First Project
-```bash
-# Using the standalone client (works from anywhere)
-./boilerfab-client list
-./boilerfab-client generate my-awesome-api --template fastapi-minimal
+#### Option 2: Development Environment
 
-# Or use the Python client directly (from project directory)
-python services/template_service/client.py --server http://localhost:8000 generate my-project
+```bash
+# Start development environment with hot-reload
+make dev
 ```
 
-The service will be available at `http://localhost:8000` with interactive documentation at `/docs`.
-
-> 💡 **Pro Tip**: The `boilerfab-client` is a standalone executable that works from anywhere! It automatically discovers API keys from multiple locations and provides colored output, health checks, and intelligent error handling.
-
-### 🔧 Installing the Standalone Client
-
-The `boilerfab-client` is a completely standalone executable that works from anywhere without dependencies.
-
-#### Quick Installation
+#### Option 3: With Monitoring Stack
 
 ```bash
-# Run the installer
-./install.sh
-
-# Choose your installation method:
-# 1. System-wide (/usr/local/bin) - requires sudo  
-# 2. User installation (~/.local/bin) - no sudo
-# 3. Current directory symlink
-# 4. Custom path
+# Start with lightweight monitoring
+make up
+make monitoring
 ```
 
-#### Manual Installation
+### Service Access Points
+
+After successful deployment:
+
+| Service | URL | Purpose |
+|---------|-----|---------|
+| **BoilerFab API** | `http://localhost:8090` | Main template service |
+| **API Documentation** | `http://localhost:8090/docs` | Interactive OpenAPI docs |
+| **Traefik Dashboard** | `http://localhost:8080` | Load balancer management |
+| **Container Logs** | `http://localhost:8090/logs` | Real-time log monitoring |
+| **Health Monitor** | `http://localhost:8090/status` | Service health dashboard |
+
+### CLI Client Installation
+
+Install the standalone CLI client for system-wide access:
 
 ```bash
-# System-wide (requires sudo)
-sudo cp boilerfab-client /usr/local/bin/
-sudo chmod +x /usr/local/bin/boilerfab-client
+# Automated installation
+make client-setup
 
-# User installation (recommended)
+# Manual installation (user-local)
 mkdir -p ~/.local/bin
-cp boilerfab-client ~/.local/bin/
+cp client/boilerfab-client ~/.local/bin/
 chmod +x ~/.local/bin/boilerfab-client
-export PATH="$HOME/.local/bin:$PATH"  # Add to ~/.bashrc
-
-# Now use from anywhere
-boilerfab-client --help
+echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
+source ~/.bashrc
 ```
 
-#### First-Time Setup
+### First-Time Configuration
 
 ```bash
-# Configure API key (interactive)
+# Get your API key
+make get-api-key
+
+# Configure CLI client (interactive)
 boilerfab-client setup
 
-# Or set via environment
-export BOILERFAB_API_KEY="your_api_key_here"
-export BOILERFAB_SERVER="https://your-server.com"  # Optional
-
-# Test connection
+# Test connectivity
 boilerfab-client health
 ```
 
-## 📖 Usage Guide
+## Usage Guide
 
 ### Command Line Interface
 
-BoilerFab provides both a standalone client and project-local Python CLI:
+BoilerFab provides both a standalone client and project-local access:
 
 ```bash
-# Standalone client (works from anywhere)
-./boilerfab-client <command> [options]
+# Standalone client (system-wide access)
+boilerfab-client <command> [options]
 
-# Project-local Python client
-python services/template_service/client.py --server http://localhost:8000 <command> [options]
+# Project-local access
+python services/template_service/client.py --server http://localhost:8090 <command>
 ```
 
-#### Available Commands
+### Available Commands
 
 | Command | Description | Example |
 |---------|-------------|---------|
-| `list` | Show all available templates | `./boilerfab-client list` |
-| `detail <template>` | Get template information | `./boilerfab-client detail fastapi-minimal` |
-| `generate <name>` | Create a new project | `./boilerfab-client generate my-app --template web-api` |
-| `create <template>` | Register new template | `./boilerfab-client create my-template -d "Description"` |
-| `health` | Check service connectivity | `./boilerfab-client health` |
-| `setup` | Configure API key | `./boilerfab-client setup` |
+| `list` | List available templates | `boilerfab-client list` |
+| `detail <template>` | Get template information | `boilerfab-client detail fastapi-minimal` |
+| `generate <name>` | Create new project | `boilerfab-client generate my-app --template web-api` |
+| `create <template>` | Register new template | `boilerfab-client create my-template -d "Description"` |
+| `health` | Check service status | `boilerfab-client health` |
+| `setup` | Configure API key | `boilerfab-client setup` |
 
-#### API Key Configuration
-
-The standalone client automatically finds your API key from:
-
-1. **Environment variable**: `BOILERFAB_API_KEY`
-2. **Current directory**: `api_config.json`
-3. **User config**: `~/.config/boilerfab/config.json`
-4. **User home**: `~/.boilerfab/config.json`
-
-```bash
-# Set via environment (recommended for CI/CD)
-export BOILERFAB_API_KEY="your_api_key_here"
-
-# Or run interactive setup
-./boilerfab-client setup
-```
-
-#### Generate Project Examples
+### Project Generation Examples
 
 ```bash
 # Basic project generation
-./boilerfab-client generate my-service
+boilerfab-client generate my-service
 
 # With specific template
-./boilerfab-client generate my-api --template fastapi-minimal
-
-# To specific directory
-./boilerfab-client generate my-project --output ./projects/
+boilerfab-client generate my-api --template fastapi-minimal
 
 # With custom parameters
-./boilerfab-client generate my-app --param database postgres --param auth jwt
+boilerfab-client generate my-app --param database=postgres --param auth=jwt
 
 # Get template details first
-./boilerfab-client detail fastapi-minimal
+boilerfab-client detail fastapi-minimal
 
-# Use with remote server
-./boilerfab-client list --server https://templates.mycompany.com
+# Generate to specific directory
+boilerfab-client generate my-project --output ./projects/
 ```
 
 ### REST API Usage
 
-Interact directly with the service using HTTP requests:
+Direct HTTP API access for integrations:
 
 ```bash
-# Set your API key
-API_KEY=$(cat api_config.json | grep -o '"ftk_[^"]*"' | head -1 | sed 's/"//g')
+# Set API key from configuration
+API_KEY=$(make get-api-key)
 
-# List templates
-curl -H "X-API-Key: $API_KEY" http://localhost:8000/api/v1/templates
+# List all templates
+curl -H "X-API-Key: $API_KEY" http://localhost:8090/api/v1/templates
 
 # Generate project (returns ZIP file)
 curl -H "X-API-Key: $API_KEY" \
      -H "Content-Type: application/json" \
      -d '{"template_name":"fastapi-minimal","project_name":"my-service"}' \
-     http://localhost:8000/api/v1/generate \
+     http://localhost:8090/api/v1/generate \
      --output my-service.zip
 ```
 
-## 📚 API Reference
+### Configuration Management
+
+The CLI client automatically locates API keys from:
+
+1. Environment variable: `BOILERFAB_API_KEY`
+2. Current directory: `api_config.json`
+3. User config: `~/.config/boilerfab/config.json`
+4. User home: `~/.boilerfab/config.json`
+
+```bash
+# Environment-based configuration (recommended for CI/CD)
+export BOILERFAB_API_KEY="your_api_key_here"
+export BOILERFAB_SERVER="https://templates.company.com"
+
+# Interactive setup
+boilerfab-client setup
+```
+
+## API Reference
 
 BoilerFab provides a comprehensive REST API for programmatic access. All endpoints require API key authentication via the `X-API-Key` header.
 
@@ -273,7 +276,8 @@ BoilerFab provides a comprehensive REST API for programmatic access. All endpoin
 |--------|----------|-------------|----------------|
 | `GET` | `/` | Service status and information | Required |
 | `GET` | `/health` | Health check endpoint | Required |
-| `GET` | `/docs` | Interactive API documentation | None |
+| `GET` | `/docs` | Interactive API documentation | Public |
+| `GET` | `/metrics` | Prometheus metrics | Required |
 
 ### Template Management
 
@@ -292,168 +296,158 @@ BoilerFab provides a comprehensive REST API for programmatic access. All endpoin
 
 ### Interactive Documentation
 
-- **Swagger UI**: `http://localhost:8000/docs`
-- **ReDoc**: `http://localhost:8000/redoc`
+Access comprehensive API documentation at:
+- **OpenAPI (Swagger)**: `http://localhost:8090/docs`
+- **ReDoc**: `http://localhost:8090/redoc`
 
-Both interfaces provide interactive API testing and comprehensive endpoint documentation.
+Both interfaces provide interactive testing capabilities and complete endpoint documentation.
 
-## 🔐 Authentication & Security
+## Security & Authentication
 
-BoilerFab implements robust security measures to protect your template service:
+BoilerFab implements enterprise-grade security measures for production environments:
 
 ### Security Features
 
 | Feature | Implementation | Benefit |
 |---------|---------------|---------|
-| **🔑 API Key Authentication** | Automatic generation and secure storage | Controlled access to all endpoints |
-| **⏱️ Constant-Time Comparison** | Prevents timing attacks | Enhanced security against exploitation |
-| **🛡️ Input Validation** | Parameter validation against schemas | Prevents injection and malformed requests |
-| **🚫 Non-Root Execution** | Container runs as non-privileged user | Reduced attack surface |
-| **🔒 Secure Key Generation** | Cryptographically secure random keys | Unpredictable API keys |
-| **🌐 CORS Configuration** | Configurable cross-origin policies | Controlled browser access |
+| **API Key Authentication** | Secure key generation and validation | Controlled access to all endpoints |
+| **Constant-Time Comparison** | Timing attack prevention | Protection against cryptographic attacks |
+| **Input Validation** | Schema-based parameter validation | Prevention of injection attacks |
+| **Non-Root Execution** | Containerized privilege isolation | Reduced attack surface |
+| **Secure Configuration** | Environment-based secrets management | No hardcoded credentials |
+| **CORS Protection** | Configurable cross-origin policies | Controlled browser access |
 
 ### API Key Management
 
 ```bash
-# API key is automatically generated on first run
-# View your API key (shown only once during generation)
-cat api_config.json
+# API key is automatically generated on first startup
+# View your API key
+make get-api-key
 
-# The CLI client automatically reads from this file
-# No manual key management required for local usage
+# The CLI client automatically reads from configuration files
+# Manual configuration not required for local usage
 ```
 
-### Security Best Practices
+### Production Security Best Practices
 
-- **🔄 Rotate API keys** periodically in production environments
-- **🔒 Use HTTPS** in production with proper TLS certificates  
-- **📁 Secure config files** with appropriate file permissions (600)
-- **🏗️ Use reverse proxy** (Nginx/Traefik) for production deployments
-- **📊 Monitor access** and implement rate limiting as needed
+- **Rotate API keys** regularly in production environments
+- **Use HTTPS** with proper TLS certificates via Traefik
+- **Secure configuration files** with appropriate permissions (600)
+- **Deploy behind reverse proxy** with rate limiting
+- **Monitor access logs** and implement alerting
+- **Use environment variables** for sensitive configuration
+- **Enable container security scanning** in CI/CD pipelines
 
-## 📝 Creating Custom Templates
+## Template Development
 
-BoilerFab's template system is highly flexible and supports any project structure. Templates use a simple directory-based approach with parameter substitution.
+BoilerFab's template system supports any project structure with flexible parameter substitution and validation.
 
 ### Template Structure
 
 ```
 templates/
 └── my-custom-template/
-    ├── 📄 metadata.json          # Template configuration and parameters
-    ├── 📁 project-files/         # Your template files with {{placeholders}}
+    ├── metadata.json              # Template configuration and parameters
+    ├── project-files/             # Template files with {{placeholders}}
     │   ├── src/
     │   │   └── main.{{extension}}
     │   ├── requirements.txt
     │   ├── Dockerfile
     │   └── README.md
-    └── 📁 config/                # Optional configuration files
+    └── config/                    # Optional configuration files
 ```
 
-### Step-by-Step Template Creation
+### Creating Custom Templates
 
-#### 1. Create Template Directory
-```bash
-mkdir -p templates/my-awesome-template
-cd templates/my-awesome-template
-```
+#### 1. Template Metadata Definition
 
-#### 2. Add Template Files
-Create your project structure with placeholder variables:
-
-```python
-# src/main.py
-"""
-{{PROJECT_NAME}} - {{description}}
-Generated by BoilerFab
-"""
-
-def main():
-    print("Hello from {{PROJECT_NAME}}!")
-    return "{{author}}"
-
-if __name__ == "__main__":
-    main()
-```
-
-#### 3. Define Template Metadata
 ```json
 {
-  "name": "my-awesome-template",
-  "description": "My custom project template with advanced features",
-  "version": "1.0.0",
-  "author": "Your Name",
+  "name": "enterprise-api-template",
+  "description": "Enterprise-grade API template with authentication and monitoring",
+  "version": "1.2.0",
+  "author": "Your Organization",
   "license": "MIT",
-  "tags": ["python", "web", "api", "custom"],
+  "tags": ["python", "fastapi", "enterprise", "monitoring"],
   "parameters": [
     {
       "name": "project_name",
       "type": "string", 
       "description": "Name of the project",
-      "required": true
+      "required": true,
+      "validation": "^[a-zA-Z][a-zA-Z0-9_-]*$"
     },
     {
-      "name": "description",
+      "name": "database_type",
       "type": "string",
-      "description": "Project description",
+      "description": "Database backend to use",
       "required": false,
-      "default": "An awesome project"
+      "default": "postgresql",
+      "options": ["postgresql", "mysql", "sqlite"]
     },
     {
-      "name": "author",
-      "type": "string",
-      "description": "Project author",
+      "name": "enable_auth",
+      "type": "boolean",
+      "description": "Enable JWT authentication",
       "required": false,
-      "default": "Developer"
-    },
-    {
-      "name": "extension",
-      "type": "string",
-      "description": "File extension to use",
-      "required": false,
-      "default": "py"
+      "default": true
     }
   ]
 }
 ```
 
-#### 4. Register Your Template
-```bash
-# Register with the service
-./client.sh create my-awesome-template \
-  --description "My custom project template" \
-  --author "Your Name" \
-  --tags python web custom
+#### 2. Template File Creation
+
+Create project files with parameter substitution:
+
+```python
+# src/main.py
+"""
+{{PROJECT_NAME}} - {{description}}
+Database: {{database_type}}
+Authentication: {{#enable_auth}}Enabled{{/enable_auth}}{{^enable_auth}}Disabled{{/enable_auth}}
+"""
+
+from fastapi import FastAPI
+
+app = FastAPI(title="{{PROJECT_NAME}}")
+
+@app.get("/")
+def health_check():
+    return {"service": "{{PROJECT_NAME}}", "status": "healthy"}
 ```
 
-#### 5. Test Your Template
-```bash
-# Generate a project using your template
-./client.sh generate test-project --template my-awesome-template
+#### 3. Template Registration
 
-# Verify the generated project
-ls -la test-project/
+```bash
+# Register template with the service
+boilerfab-client create enterprise-api-template \
+  --description "Enterprise API template" \
+  --author "Your Organization" \
+  --tags python fastapi enterprise
 ```
 
 ### Advanced Template Features
 
 | Feature | Usage | Example |
 |---------|-------|---------|
-| **🔧 Parameter Types** | `string`, `number`, `boolean`, `array` | `"type": "boolean"` |
-| **✅ Required Parameters** | Force user input for critical values | `"required": true` |
-| **🎯 Default Values** | Provide sensible defaults | `"default": "my-app"` |
-| **🏷️ Template Tags** | Organize and categorize templates | `"tags": ["web", "api"]` |
-| **📋 Parameter Validation** | Ensure correct parameter formats | Built-in type checking |
-| **🔄 Nested Placeholders** | Use parameters within other parameters | `{{BASE_{{type}}_PATH}}` |
+| **Parameter Types** | `string`, `number`, `boolean`, `array` | `"type": "boolean"` |
+| **Input Validation** | Regular expressions for string validation | `"validation": "^[a-zA-Z][a-zA-Z0-9_]*$"` |
+| **Required Parameters** | Force user input for critical values | `"required": true` |
+| **Default Values** | Provide sensible defaults | `"default": "postgresql"` |
+| **Parameter Options** | Constrain input to predefined values | `"options": ["dev", "staging", "prod"]` |
+| **Conditional Logic** | Mustache-style conditionals | `{{#enable_feature}}...{{/enable_feature}}` |
+| **Template Tags** | Organize and categorize templates | `"tags": ["web", "api", "enterprise"]` |
 
 ### Template Best Practices
 
-- **📁 Use clear directory structures** that match target project conventions
-- **📝 Provide comprehensive metadata** with detailed parameter descriptions  
-- **🧪 Test templates thoroughly** before deployment to production
-- **📖 Document parameter usage** and provide examples
-- **🏷️ Use descriptive tags** for template discovery
-- **🔄 Version your templates** for tracking and rollback capabilities
+- **Use clear directory structures** that match target project conventions
+- **Provide comprehensive metadata** with detailed parameter descriptions
+- **Implement parameter validation** to prevent invalid configurations
+- **Test templates thoroughly** before production deployment
+- **Version your templates** for tracking and rollback capabilities
+- **Document parameter usage** with examples and constraints
+- **Use descriptive tags** for template discovery and organization
 
 ## Development & Testing
 
@@ -528,7 +522,7 @@ environment:
   - TEMPLATES_DIR=/app/templates
 ```
 
-## 🐳 Deployment & Operations
+## Deployment & Operations
 
 BoilerFab is designed for modern containerized deployments with support for various orchestration platforms.
 
@@ -536,82 +530,40 @@ BoilerFab is designed for modern containerized deployments with support for vari
 
 ```bash
 # Development with hot reloading
-make dev-run
+make dev
 
 # Build and test locally  
 make build
 make test
-```
 
-### Docker Deployment
-
-```bash
-# Single container deployment
-make docker-build
-make docker-run
-
-# Docker Compose (recommended)
-make compose-up
-
-# View logs and monitor
-make compose-logs
-
-# Stop and cleanup
-make compose-down
+# View logs
+make logs
 ```
 
 ### Production Deployment
 
-#### Using Docker Compose
+#### Docker Compose Deployment (Recommended)
 
-1. **Configure Environment**
 ```bash
-cp docs/.env.example .env
-# Edit .env with your production settings
-```
+# Production deployment with Traefik
+make prod
 
-2. **Secure Configuration**
-```yaml
-# docker-compose.prod.yml
-services:
-  template-service:
-    environment:
-      - SERVICE_HOST=0.0.0.0
-      - SERVICE_PORT=8000
-      - LOG_LEVEL=WARNING
-      - CORS_ORIGINS=https://your-domain.com
-    restart: unless-stopped
-    volumes:
-      - ./api_config.json:/app/api_config.json:ro
-      - ./templates:/app/templates:ro
-```
+# With monitoring stack
+make prod
+make monitoring
 
-3. **Deploy with Reverse Proxy**
-```nginx
-# nginx configuration
-server {
-    listen 443 ssl;
-    server_name api.yourdomain.com;
-    
-    ssl_certificate /path/to/cert.pem;
-    ssl_certificate_key /path/to/key.pem;
-    
-    location / {
-        proxy_pass http://localhost:8000;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-    }
-}
+# Custom configuration
+docker-compose -f deployment/docker-compose.prod.yml up -d
 ```
 
 #### Kubernetes Deployment
 
 ```yaml
-# k8s-deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: boilerfab
+  namespace: production
 spec:
   replicas: 3
   selector:
@@ -632,86 +584,143 @@ spec:
           value: "0.0.0.0"
         - name: LOG_LEVEL
           value: "INFO"
-        volumeMounts:
-        - name: api-config
-          mountPath: /app/api_config.json
-          subPath: api_config.json
-        - name: templates
-          mountPath: /app/templates
-      volumes:
-      - name: api-config
-        secret:
-          secretName: boilerfab-config
-      - name: templates
-        configMap:
-          name: boilerfab-templates
+        - name: BOILERFAB_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: boilerfab-secrets
+              key: api-key
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+            httpHeaders:
+            - name: X-API-Key
+              value: "healthcheck-key"
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+            httpHeaders:
+            - name: X-API-Key
+              value: "healthcheck-key"
+          initialDelaySeconds: 5
+          periodSeconds: 5
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: boilerfab-service
+  namespace: production
 spec:
   selector:
     app: boilerfab
   ports:
   - port: 80
     targetPort: 8000
+    name: http
   type: ClusterIP
+```
+
+#### Traefik Integration
+
+BoilerFab includes native Traefik integration for automatic service discovery and SSL termination:
+
+```yaml
+# Traefik configuration (included in docker-compose.yml)
+services:
+  traefik:
+    image: traefik:v3.0
+    command:
+      - "--api.dashboard=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--certificatesresolvers.letsencrypt.acme.tlschallenge=true"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.traefik.rule=Host(`traefik.yourdomain.com`)"
 ```
 
 ### Environment Configuration
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `SERVICE_PORT` | `8000` | Server port |
-| `SERVICE_HOST` | `0.0.0.0` | Bind address |
+| `SERVICE_PORT` | `8000` | API server port |
+| `SERVICE_HOST` | `0.0.0.0` | Server bind address |
 | `LOG_LEVEL` | `INFO` | Logging level (DEBUG/INFO/WARNING/ERROR) |
 | `TEMPLATES_DIR` | `./templates` | Template storage directory |
-| `SERVICE_NAME` | `BoilerFab Template Service` | Service identification |
+| `BOILERFAB_API_KEY` | Auto-generated | Service authentication key |
 | `DEBUG_MODE` | `false` | Enable debug mode |
 | `CORS_ORIGINS` | `["*"]` | Allowed origins (comma-separated) |
 
-### Health Monitoring
+### Health Monitoring & Metrics
 
 ```bash
-# Health check endpoint
-curl -H "X-API-Key: $API_KEY" http://localhost:8000/health
-
-# Service status  
-curl -H "X-API-Key: $API_KEY" http://localhost:8000/
+# Health check endpoints
+curl -H "X-API-Key: $API_KEY" http://localhost:8090/health
+curl -H "X-API-Key: $API_KEY" http://localhost:8090/
 
 # Prometheus metrics (if enabled)
-curl http://localhost:8000/metrics
+curl http://localhost:8090/metrics
+
+# Service status dashboard
+curl http://localhost:8090/status
 ```
 
-## 🧪 Development & Testing
+### Nginx Proxy Manager Integration
 
-BoilerFab includes a comprehensive testing framework to ensure reliability and maintainability.
+BoilerFab works seamlessly with Nginx Proxy Manager for SSL termination and domain management:
+
+```bash
+# Generate NPM configuration guide
+make nginx-config
+
+# Example subdomain configuration:
+# boilerfab.yourdomain.com  -> http://your-server:8090
+# traefik.yourdomain.com    -> http://your-server:8080
+```
+
+## Development & Testing
+
+BoilerFab includes comprehensive testing and development tools to ensure reliability and maintainability.
 
 ### Test Suite Overview
 
 | Test Type | Command | Coverage |
 |-----------|---------|----------|
-| **Unit Tests** | `make unit-test` | Core functionality and API endpoints |
-| **Integration Tests** | `make e2e-test` | End-to-end client-server interactions |
-| **Container Tests** | `make compose-test` | Docker deployment and orchestration |
-| **Full Suite** | `make test` | Complete test coverage |
+| **Unit Tests** | `make test` | Core functionality and API endpoints |
+| **Integration Tests** | `make test` | End-to-end client-server interactions |
+| **Container Tests** | `make test` | Docker deployment and orchestration |
+| **Health Checks** | `make health` | Service connectivity and status |
 
-### Running Tests
+### Development Workflow
 
 ```bash
-# Quick unit tests
-make unit-test
+# Setup development environment
+make dev
 
-# Full end-to-end testing with containers
-make compose-test
+# Run tests to verify functionality
+make test
 
-# Run comprehensive test suite
-./scripts/test_suite.sh
+# Check service health
+make health
 
-# Custom test runs
-python -m pytest testing/ -v
-python services/template_service/client.py --server http://localhost:8000 list
+# View real-time logs
+make logs
+
+# Test API endpoints
+boilerfab-client health
+boilerfab-client list
 ```
 
 ### Test Components
@@ -725,80 +734,121 @@ The test suite validates:
 - ✅ **Authentication Flow** - API keys are validated correctly
 - ✅ **Error Handling** - Graceful handling of invalid inputs
 - ✅ **Container Deployment** - Docker images build and run successfully
+- ✅ **Health Monitoring** - Health checks and metrics collection
 
-### Development Workflow
-
-```bash
-# Start development environment
-make dev-run
-
-# Make code changes...
-
-# Run tests to verify changes
-make test
-
-# Check logs for any issues
-make compose-logs
-
-# Build production image
-make docker-build
-```
-
-### Debugging
+### Debugging & Troubleshooting
 
 ```bash
 # Enable debug mode
-DEBUG_MODE=true make dev-run
+DEBUG_MODE=true make dev
 
 # View detailed logs
-LOG_LEVEL=DEBUG make compose-up
+LOG_LEVEL=DEBUG make logs
 
 # Interactive container debugging
-docker exec -it boilerfab-service bash
+make ssh service=boilerfab-service
+
+# Check service configuration
+make config
+
+# Validate Docker Compose files
+make validate-compose
 ```
 
-## 📊 Configuration Reference
+## Configuration Management
 
-### Complete Environment Variables
+BoilerFab uses a layered configuration approach with `settings.yaml` for centralized management.
+
+### Configuration Hierarchy
+
+1. **settings.yaml** - Main configuration file
+2. **Environment variables** - Runtime overrides
+3. **Docker Compose** - Container-specific settings
+4. **Traefik labels** - Service discovery and routing
+
+### Main Configuration (settings.yaml)
+
+```yaml
+# Service Configuration
+service:
+  name: "BoilerFab"
+  version: "1.0.0"
+  port: 8000
+  host: "0.0.0.0"
+  debug: false
+
+# API Configuration
+api:
+  title: "BoilerFab Template Service"
+  description: "Enterprise project scaffolding platform"
+  version: "v1"
+  docs_url: "/docs"
+  redoc_url: "/redoc"
+
+# Security
+security:
+  api_key_length: 32
+  cors_origins: ["*"]
+  rate_limiting: true
+  max_requests_per_minute: 100
+
+# Templates
+templates:
+  directory: "./templates"
+  max_size_mb: 100
+  allowed_extensions: [".py", ".js", ".ts", ".yaml", ".json", ".md", ".txt"]
+
+# Traefik Integration
+traefik:
+  enabled: true
+  domain: "localhost"
+  ssl: false
+  dashboard: true
+
+# Monitoring
+monitoring:
+  enabled: true
+  metrics_endpoint: "/metrics"
+  health_endpoint: "/health"
+  log_level: "INFO"
+```
+
+### Environment Variable Overrides
 
 ```bash
 # Service Configuration
-SERVICE_PORT=8000                    # Server port
-SERVICE_HOST=0.0.0.0                # Bind address  
-SERVICE_NAME="BoilerFab"             # Service name
-DEBUG_MODE=false                     # Debug mode
+export BOILERFAB_SERVICE_PORT=8000
+export BOILERFAB_SERVICE_HOST=0.0.0.0
+export BOILERFAB_DEBUG_MODE=false
 
-# Logging
-LOG_LEVEL=INFO                       # DEBUG|INFO|WARNING|ERROR
+# Security
+export BOILERFAB_API_KEY="your_secure_api_key"
+export BOILERFAB_CORS_ORIGINS="https://yourdomain.com,https://app.yourdomain.com"
 
-# Directories
-TEMPLATES_DIR=./templates            # Template storage path
+# Templates
+export BOILERFAB_TEMPLATES_DIR="/app/templates"
 
-# Security  
-CORS_ORIGINS="*"                     # Comma-separated allowed origins
-
-# Performance
-MAX_WORKERS=4                        # Uvicorn worker processes
-TIMEOUT=30                           # Request timeout seconds
+# Monitoring
+export BOILERFAB_LOG_LEVEL=INFO
 ```
 
-### API Key Configuration
+### Traefik Configuration
 
-The `api_config.json` file is automatically managed:
+Automatic service discovery and routing configuration:
 
-```json
-{
-  "api_key": "ftk_secure_generated_key_here",
-  "created_at": "2024-01-15T10:30:00Z",
-  "service_name": "BoilerFab Template Service"
-}
+```yaml
+# Traefik labels in docker-compose.yml
+labels:
+  - "traefik.enable=true"
+  - "traefik.http.routers.boilerfab.rule=Host(`boilerfab.${DOMAIN:-localhost}`)"
+  - "traefik.http.routers.boilerfab.entrypoints=web,websecure"
+  - "traefik.http.services.boilerfab.loadbalancer.server.port=8000"
+  - "traefik.http.routers.boilerfab.tls.certresolver=letsencrypt"
 ```
 
-**⚠️ Important**: Keep this file secure and never commit it to version control!
+## Contributing
 
-## 🤝 Contributing
-
-We welcome contributions to make BoilerFab even better! Here's how to get involved:
+We welcome contributions to improve BoilerFab. Here's how to get involved:
 
 ### Development Setup
 
@@ -808,10 +858,10 @@ git clone https://github.com/yourusername/BoilerFab.git
 cd BoilerFab
 
 # Create a development branch
-git checkout -b feature/awesome-improvement
+git checkout -b feature/improvement-name
 
 # Set up development environment
-make dev-run
+make dev
 
 # Run tests to ensure everything works
 make test
@@ -819,11 +869,11 @@ make test
 
 ### Contribution Guidelines
 
-- 🐛 **Bug Reports**: Use detailed issue descriptions with reproduction steps
-- ✨ **Feature Requests**: Explain the use case and expected behavior  
-- 🔧 **Code Contributions**: Follow existing code style and add tests
-- 📝 **Documentation**: Help improve guides, examples, and API docs
-- 🧪 **Testing**: Expand test coverage for better reliability
+- **Bug Reports**: Provide detailed issue descriptions with reproduction steps
+- **Feature Requests**: Explain the use case and expected behavior  
+- **Code Contributions**: Follow existing code style and include tests
+- **Documentation**: Help improve guides, examples, and API documentation
+- **Testing**: Expand test coverage for better reliability
 
 ### Code Quality Standards
 
@@ -832,21 +882,29 @@ make test
 - Follow Python PEP 8 style guidelines
 - Add docstrings for public functions and classes
 - Update documentation for user-facing changes
+- Ensure Docker containers build successfully
 
-## 📄 License
+### Pull Request Process
+
+1. Create a feature branch from `main`
+2. Make your changes with appropriate tests
+3. Update documentation if needed
+4. Run the full test suite
+5. Submit a pull request with clear description
+6. Respond to code review feedback
+
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🆘 Support
-
-Need help? We've got you covered:
+## Support & Resources
 
 | Resource | Link | Purpose |
 |----------|------|---------|
-| 📖 **Documentation** | [./docs/](./docs/) | Comprehensive guides and tutorials |
-| 🐛 **Issue Tracker** | [GitHub Issues](https://github.com/Trafexofive/BoilerFab/issues) | Bug reports and feature requests |
-| 💬 **Discussions** | [GitHub Discussions](https://github.com/Trafexofive/BoilerFab/discussions) | Questions and community support |
-| 📧 **Security Issues** | [Security Policy](SECURITY.md) | Private vulnerability reporting |
+| **Documentation** | [./docs/](./docs/) | Comprehensive guides and tutorials |
+| **Issue Tracker** | [GitHub Issues](https://github.com/Trafexofive/BoilerFab/issues) | Bug reports and feature requests |
+| **Discussions** | [GitHub Discussions](https://github.com/Trafexofive/BoilerFab/discussions) | Questions and community support |
+| **Security Issues** | [Security Policy](SECURITY.md) | Private vulnerability reporting |
 
 ### Getting Help
 
@@ -860,21 +918,24 @@ Need help? We've got you covered:
 
 ---
 
-## 🎯 About BoilerFab
+## About BoilerFab
 
-**BoilerFab** transforms the way development teams approach project creation. By providing a centralized, secure, and infinitely extensible template service, we help you:
+**BoilerFab** is an enterprise-grade project scaffolding platform that transforms how development teams approach project creation. By providing centralized, secure, and extensible template management, BoilerFab helps organizations:
 
-- **🚀 Accelerate Development**: Generate production-ready projects in seconds
-- **📏 Maintain Consistency**: Ensure all projects follow your team's standards  
-- **🔒 Enhance Security**: Built-in authentication and secure template management
-- **📈 Scale Efficiently**: Container-native architecture grows with your needs
-- **🛠️ Stay Flexible**: Support for any technology stack or framework
+- **Accelerate Development**: Generate production-ready projects in seconds
+- **Maintain Consistency**: Ensure all projects follow organizational standards  
+- **Enhance Security**: Built-in authentication and secure template management
+- **Scale Efficiently**: Container-native architecture that grows with your needs
+- **Stay Flexible**: Support for any technology stack or framework
+- **Integrate Seamlessly**: Works with existing CI/CD pipelines and infrastructure
 
-Whether you're building microservices, web applications, or complex distributed systems, BoilerFab provides the foundation for rapid, consistent, and secure project scaffolding.
+Whether building microservices, web applications, or complex distributed systems, BoilerFab provides the foundation for rapid, consistent, and secure project scaffolding at enterprise scale.
 
-**Ready to supercharge your development workflow?** [Get started in 5 minutes](#-quick-start) and see the difference! 🚀
+---
 
-**Ready to supercharge your development workflow?** 
+<div align="center">
+
+**Ready to standardize your development workflow?**
 
 ```bash
 git clone https://github.com/Trafexofive/BoilerFab.git
@@ -882,15 +943,6 @@ cd BoilerFab
 make up
 ```
 
-**The great work starts now!** 🏭🚀
+**Enterprise project scaffolding starts here.** 🏗️
 
----
-
-## 📊 **Quick Stats**
-- **⚡ Deploy Time**: < 30 seconds
-- **🔧 Commands Available**: 47+ Makefile targets
-- **📦 Templates Ready**: 11+ production frameworks
-- **🌐 Services**: Traefik + API + Monitoring
-- **🏭 Organization**: Factorio-approved efficiency
-
-**Perfect for Nginx Proxy Manager users - just add subdomains and go!** 🎯
+</div>
