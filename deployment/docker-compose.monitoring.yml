@@ -1,0 +1,84 @@
+services:
+  # Lightweight Log Aggregation - Dozzle  
+  dozzle:
+    image: amir20/dozzle:latest
+    container_name: boilerfab-dozzle
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      - DOZZLE_NO_ANALYTICS=true
+      - DOZZLE_FILTER="name=boilerfab"
+      - DOZZLE_LEVEL=info
+    networks:
+      - boilerfab-net
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.dozzle.rule=Host(`logs.localhost`) || PathPrefix(`/logs`)"
+      - "traefik.http.services.dozzle.loadbalancer.server.port=8080"
+      - "traefik.http.middlewares.dozzle-strip.stripprefix.prefixes=/logs"
+      - "traefik.http.routers.dozzle.middlewares=dozzle-strip"
+
+  # Uptime Monitoring - Uptime Kuma
+  uptime-kuma:
+    image: louislam/uptime-kuma:1
+    container_name: boilerfab-uptime
+    volumes:
+      - uptime-kuma-data:/app/data
+    environment:
+      - UPTIME_KUMA_DISABLE_FRAME_SAMEORIGIN=1
+    networks:
+      - boilerfab-net
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3001/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.uptime.rule=Host(`status.localhost`) || PathPrefix(`/status`)"
+      - "traefik.http.services.uptime.loadbalancer.server.port=3001"
+      - "traefik.http.middlewares.uptime-strip.stripprefix.prefixes=/status"
+      - "traefik.http.routers.uptime.middlewares=uptime-strip"
+
+  # Simple Metrics Collector (lightweight alternative to Prometheus)
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    container_name: boilerfab-cadvisor
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    command:
+      - '--housekeeping_interval=30s'
+      - '--docker_only=true'
+      - '--disable_metrics=accelerator,cpu_topology,disk,memory_numa,tcp,udp,percpu,sched,process,hugetlb,referenced_memory,resctrl,cpuset,advtcp,memory_numa'
+    privileged: true
+    devices:
+      - /dev/kmsg
+    networks:
+      - boilerfab-net
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.cadvisor.rule=Host(`metrics.localhost`) || PathPrefix(`/metrics`)"
+      - "traefik.http.services.cadvisor.loadbalancer.server.port=8080"
+      - "traefik.http.middlewares.cadvisor-strip.stripprefix.prefixes=/metrics"
+      - "traefik.http.routers.cadvisor.middlewares=cadvisor-strip"
+
+volumes:
+  uptime-kuma-data:
+    name: boilerfab-uptime-data
+
+networks:
+  boilerfab-net:
+    external: true
+    name: boilerfab-network

@@ -1,4 +1,35 @@
 services:
+  # Traefik Reverse Proxy - The Gateway
+  traefik:
+    image: traefik:v3.0
+    container_name: boilerfab-traefik
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.traefik.address=:8080"
+      - "--ping=true"
+    ports:
+      - "80:80"       # Main HTTP entry point
+      - "8080:8080"   # Traefik dashboard
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - boilerfab-net
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "traefik", "healthcheck", "--ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.traefik-dashboard.rule=Host(`traefik.localhost`) || PathPrefix(`/traefik`)"
+      - "traefik.http.services.traefik-dashboard.loadbalancer.server.port=8080"
+      - "com.docker.compose.project=boilerfab"
+
+  # BoilerFab Core Service
   boilerfab-service:
     build:
       context: ../
@@ -15,10 +46,6 @@ services:
       - LOG_LEVEL=${LOG_LEVEL:-INFO}
       - DEBUG_MODE=${DEBUG_MODE:-false}
       - TEMPLATES_DIR=/app/templates
-    
-    # Port mapping
-    ports:
-      - "${SERVICE_PORT:-8000}:8000"
     
     # Volumes - organized paths
     volumes:
@@ -48,8 +75,15 @@ services:
     networks:
       - boilerfab-net
     
-    # Labels for your universal Makefile
+    # Traefik Labels
     labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.boilerfab.rule=Host(`boilerfab.localhost`) || PathPrefix(`/api`) || PathPrefix(`/docs`) || PathPrefix(`/redoc`) || PathPrefix(`/health`)"
+      - "traefik.http.services.boilerfab.loadbalancer.server.port=8000"
+      - "traefik.http.middlewares.boilerfab-cors.headers.accesscontrolalloworiginlist=*"
+      - "traefik.http.middlewares.boilerfab-cors.headers.accesscontrolallowmethods=GET,POST,PUT,DELETE,OPTIONS"
+      - "traefik.http.middlewares.boilerfab-cors.headers.accesscontrolallowheaders=*"
+      - "traefik.http.routers.boilerfab.middlewares=boilerfab-cors"
       - "com.docker.compose.project=boilerfab"
       - "service.name=boilerfab-service"
       - "service.type=api"
@@ -91,40 +125,6 @@ services:
     labels:
       - "com.docker.compose.project=boilerfab"
 
-  # Lightweight monitoring - Simple metrics dashboard
-  dozzle:
-    image: amir20/dozzle:latest
-    ports:
-      - "9999:8080"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-    environment:
-      - DOZZLE_LEVEL=info
-      - DOZZLE_TAILSIZE=300
-    networks:
-      - boilerfab-net
-    profiles:
-      - monitoring
-    labels:
-      - "com.docker.compose.project=boilerfab"
-      - "monitoring.type=logs"
-
-  # Simple health monitoring dashboard  
-  uptime-kuma:
-    image: louislam/uptime-kuma:1-alpine
-    ports:
-      - "3001:3001"
-    volumes:
-      - uptime_data:/app/data
-    networks:
-      - boilerfab-net
-    profiles:
-      - monitoring
-    restart: unless-stopped
-    labels:
-      - "com.docker.compose.project=boilerfab"
-      - "monitoring.type=uptime"
-
 volumes:
   redis_data:
     labels:
@@ -132,12 +132,10 @@ volumes:
   postgres_data:
     labels:
       - "com.docker.compose.project=boilerfab"
-  uptime_data:
-    labels:
-      - "com.docker.compose.project=boilerfab"
 
 networks:
   boilerfab-net:
     driver: bridge
+    name: boilerfab-network
     labels:
       - "com.docker.compose.project=boilerfab"

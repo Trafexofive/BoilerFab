@@ -41,13 +41,31 @@ PROJECT_NAME ?= $(shell basename $(CURDIR))
 
 help:
 	@echo -e "$(BLUE)========================================================================="
-	@echo -e " BoilerFab - Universal Docker Compose Makefile (Organized Edition)"
+	@echo -e " BoilerFab - Universal Docker Compose Makefile (Traefik Edition)"
 	@echo -e " Project: $(PROJECT_NAME)"
-	@echo -e " 🏭 Factorio-approved organized structure!"
+	@echo -e " 🏭 Factorio-approved with Traefik integration!"
 	@echo -e "=========================================================================$(NC)"
 	@echo ""
 	@echo -e "$(YELLOW)Usage: make [target] [service=SERVICE_NAME] [args=\"ARGS\"]$(NC)"
 	@echo ""
+	@echo -e "$(GREEN)🚀 CORE COMMANDS:$(NC)"
+	@echo -e "  $(YELLOW)up$(NC)               Start all services (Traefik + BoilerFab)"
+	@echo -e "  $(YELLOW)down$(NC)             Stop all services gracefully"
+	@echo -e "  $(YELLOW)restart$(NC)          Restart all services"
+	@echo -e "  $(YELLOW)status$(NC)           Show service status" 
+	@echo -e "  $(YELLOW)logs$(NC)             Follow all logs"
+	@echo ""
+	@echo -e "$(GREEN)🌐 TRAEFIK & MONITORING:$(NC)"
+	@echo -e "  $(YELLOW)monitoring$(NC)       Enable monitoring stack (Dozzle + Uptime Kuma)"
+	@echo -e "  $(YELLOW)traefik$(NC)          Open Traefik dashboard"
+	@echo -e "  $(YELLOW)get-api-key$(NC)      Display API key"
+	@echo -e "  $(YELLOW)client-setup$(NC)     Install global CLI client"
+	@echo ""
+	@echo -e "$(GREEN)🏭 DEPLOYMENT:$(NC)"
+	@echo -e "  $(YELLOW)dev$(NC)              Development mode with hot-reload"
+	@echo -e "  $(YELLOW)prod$(NC)             Production deployment with SSL"
+	@echo -e "  $(YELLOW)build$(NC)            Build all images"
+	@echo -e "  $(YELLOW)test$(NC)             Run full test suite"
 	@echo -e "$(GREEN)🚀 Quick Start (Organized Paths):$(NC)"
 	@echo -e "  dev                 - Start development environment"
 	@echo -e "  prod                - Start production environment"  
@@ -115,11 +133,22 @@ validate-compose: ## Validate compose file syntax
 	@echo -e "$(BLUE)Validating $(COMPOSE_FILE) syntax...$(NC)"
 	@$(COMPOSE) config --quiet && echo -e "$(GREEN)✓ Compose file is valid$(NC)" || (echo -e "$(RED)✗ Compose file validation failed$(NC)" && exit 1)
 
-up: validate-compose ## Start all services
-	@echo -e "$(GREEN)Starting services from $(COMPOSE_FILE)...$(NC)"
-	@$(COMPOSE) up -d
-	@echo -e "$(GREEN)✓ Services are now running in detached mode.$(NC)"
-
+up: validate-compose ## 🚀 Start all services (Traefik + BoilerFab)
+@echo "🏭 Starting BoilerFab factory with Traefik..."
+$(COMPOSE) up -d
+@sleep 3
+@echo "✅ BoilerFab factory is operational!"
+@echo ""
+@echo "🌐 Access Points:"
+@echo "   🔥 BoilerFab API:    http://localhost/api/v1/templates"
+@echo "   📚 Documentation:    http://localhost/docs"
+@echo "   🛠️ Traefik Dashboard: http://localhost:8080"
+@echo "   📊 Service Health:   http://localhost/health"
+@echo ""
+@echo "🎯 Quick Start:"
+@echo "   make get-api-key                    # Get your API key"
+@echo "   client/boilerfab-client list       # List templates"
+@echo "   make monitoring                     # Enable monitoring"
 start: up ## Alias for up
 
 down: ## Stop and remove all services  
@@ -415,3 +444,53 @@ ifneq ($(file),)
     COMPOSE_FILE := $(file)
     COMPOSE := docker compose -f $(COMPOSE_FILE)
 endif
+
+
+# 🌐 Traefik & Monitoring Commands
+traefik: ## 🌐 Open Traefik dashboard
+@echo "🌐 Opening Traefik dashboard..."
+@command -v xdg-open > /dev/null && xdg-open http://localhost:8080 || echo "Visit: http://localhost:8080"
+
+get-api-key: ## 🔑 Display API key for client usage
+@echo "🔑 BoilerFab API Key:"
+@if [ -f runtime/api_config.json ]; then \
+grep -o ftk_[^]*' runtime/api_config.json | head -1 | sed 's///g; \
+elif [ -f api_config.json ]; then \
+grep -o ftk_[^]*' api_config.json | head -1 | sed 's///g; \
+else \
+echo "❌ No API key found. Start the service first: make up"; \
+fi
+
+client-setup: ## 🧰 Setup global CLI client
+@echo "🧰 Setting up BoilerFab CLI client..."
+@./client/install.sh
+@echo "✅ CLI client installed! Use 'boilerfab-client --help'"
+
+monitoring: ## 📊 Enable lightweight monitoring stack (Dozzle + Uptime Kuma)
+@echo "📊 Starting lightweight monitoring stack..."
+docker compose -f $(COMPOSE_FILE) -f deployment/docker-compose.monitoring.yml up -d
+@sleep 3
+@echo "✅ Monitoring stack is ready!"
+@echo ""
+@echo "📊 Monitoring Access:"
+@echo "   📋 Container Logs:   http://localhost/logs"
+@echo "   ⚡ Uptime Monitor:   http://localhost/status" 
+@echo "   📈 Metrics:          http://localhost/metrics"
+@echo "   🛠️ Traefik Metrics:  http://localhost:8080"
+
+monitoring-down: ## 📊 Stop monitoring stack
+@echo "📊 Stopping monitoring stack..."
+docker compose -f $(COMPOSE_FILE) -f deployment/docker-compose.monitoring.yml down
+
+nginx-config: ## 🌐 Generate Nginx Proxy Manager configuration
+@echo "🌐 Nginx Proxy Manager Configuration:"
+@echo ""
+@echo "Add these subdomains pointing to your server:"
+@echo "  boilerfab.yourdomain.com  -> http://your-server:80"
+@echo "  traefik.yourdomain.com    -> http://your-server:8080"
+@echo "  logs.yourdomain.com       -> http://your-server/logs"
+@echo "  status.yourdomain.com     -> http://your-server/status"
+@echo ""
+@echo "Enable SSL in NPM for production!"
+
+
