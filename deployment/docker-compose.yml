@@ -57,13 +57,13 @@ services:
       - ../runtime/logs:/app/logs:rw
       - ../runtime/backups:/app/backups:rw
     
-    # Disable health check for now - focus on routing
-    # healthcheck:
-    #   test: ["CMD", "curl", "-f", "http://localhost:8000/"]
-    #   interval: 30s
-    #   timeout: 10s
-    #   retries: 3
-    #   start_period: 10s
+    # Health check - public endpoint
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/healthz"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
     
     # Logging configuration
     logging:

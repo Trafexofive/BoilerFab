@@ -32,6 +32,18 @@ async def health(request: Request):
     return {"status": "healthy"}
 
 
+@router.get("/healthz", response_model=dict)
+async def healthz():
+    """Public health endpoint for load balancers and monitoring"""
+    return {"status": "healthy", "service": "boilerfab"}
+
+
+@router.get("/ping", response_model=dict)
+async def ping():
+    """Simple ping endpoint for health checks"""
+    return {"pong": True}
+
+
 @router.get("/api/v1/templates", response_model=List[TemplateInfo])
 async def list_templates(request: Request):
     """List all available templates"""
