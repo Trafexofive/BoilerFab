@@ -8,7 +8,7 @@
 [![FastAPI](https://img.shields.io/badge/FastAPI-Framework-red.svg)](https://fastapi.tiangolo.com/)
 [![Python 3.8+](https://img.shields.io/badge/Python-3.8%2B-blue.svg)](https://python.org)
 
-**🎯 Factorio-approved project scaffolding with Universal Docker Compose Makefile**
+**🎯 project scaffolding platform**
 
 *Generate production-ready projects in seconds. Deploy anywhere. Scale infinitely.*
 
